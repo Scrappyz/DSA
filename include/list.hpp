@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <initializer_list>
 
 template<typename T>
@@ -20,12 +21,23 @@ class List {
         int size_;
     public:
         List() : head_(), tail_(), size_() {}
+        List(const List<T>& l) : head_(), tail_(), size_() 
+        {
+            assign(l);
+        }
         List(const std::initializer_list<T>& il) : head_(), tail_(), size_() 
         {
             assign(il);
         }
         
-        ~List() {}
+        ~List()
+        {
+            while(head_ != nullptr) {
+                Node<T>* temp = head_;
+                head_ = head_->next;
+                delete temp;
+            }
+        }
 
         Node<T>* head() const
         {
@@ -95,6 +107,13 @@ class List {
             n->prev = ptr; // link the new node to the ptr
             ptr->next = n; // link ptr to new node
             size_++;
+        }
+
+        void assign(const List<T>& l)
+        {
+            for(Node<T>* ptr = l.head_; ptr != nullptr; ptr = ptr->next) { // for loop to traverse list
+                append(ptr->data);
+            }
         }
 
         void assign(const std::initializer_list<T>& il)
@@ -185,6 +204,11 @@ class List {
             return size_ <= 0;
         }
 
+        void operator=(const List<T>& l)
+        {
+            assign(l);
+        } 
+
         void operator=(const std::initializer_list<T>& il)
         {
             assign(il);
@@ -220,5 +244,6 @@ class List {
                     std::cout << ptr->data << " ";
                 }
             }
+            std::cout << std::endl;
         }
 };
