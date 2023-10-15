@@ -105,24 +105,51 @@ class List {
             size_ = il.size();
         }
 
-        void pop()
+        void popHead()
+        {
+            head_ = head_->next;
+            delete head_->prev;
+            head_->prev = nullptr;
+            size_--;
+        }
+
+        void popTail()
         {
             tail_ = tail_->prev;
             delete tail_->next;
             tail_->next = nullptr;
+            size_--;
         }
 
         void remove(int k)
         {
+            if(k < 0 || k > size_-1) {
+                throw "[Error] Index out of range";
+            }
+
+            if(k == 0) {
+                popHead();
+                return;
+            }
+
+            if(k == size_-1) {
+                popTail();
+                return;
+            }
+
             Node<T>* ptr = head_; // use to traverse list
-            for(int i = 0; i < k; i++) {
+            for(int i = 0; i < k-1; i++) {
                 if(ptr == nullptr) { // reached the end of list
                     break;
                 }
                 ptr = ptr->next; // move to next node
             }
-
-
+            
+            Node<T>* temp = ptr->next->next;
+            delete ptr->next;
+            ptr->next = temp;
+            temp->prev = ptr; 
+            size_--;
         }
 
         T& operator[](int k) const
@@ -149,7 +176,7 @@ class List {
                     ptr = ptr->prev;
                 }
             }
-            
+
             return ptr->data;
         }
 

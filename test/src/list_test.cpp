@@ -40,6 +40,8 @@ TEST(insert, inserting)
     EXPECT_EQ(l, List<int>({11,0,1}));
     l.insert(2, 12);
     EXPECT_EQ(l, List<int>({11,0,12,1}));
+
+    EXPECT_THROW(l.insert(4, 33), const char*);
 }
 
 TEST(insert, edge_case)
@@ -47,6 +49,26 @@ TEST(insert, edge_case)
     List<int> l = {};
     EXPECT_THROW(l.insert(1, 10), const char*);
     EXPECT_THROW(l.insert(0, 10), const char*);
+}
+
+TEST(remove, removing)
+{
+    List<int> l = {1,2,3,4,5};
+    l.remove(1);
+    EXPECT_EQ(l, List<int>({1,3,4,5}));
+    l.remove(2);
+    EXPECT_EQ(l, List<int>({1,3,5}));
+
+    l.remove(0);
+    EXPECT_EQ(l, List<int>({3,5}));
+    l.remove(1);
+    EXPECT_EQ(l, List<int>({3}));
+}
+
+TEST(remove, edge_case)
+{
+    List<int> l = {};
+    EXPECT_THROW(l.remove(0), const char*);
 }
 
 TEST(operator_brackets, accessing)
