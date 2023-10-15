@@ -56,6 +56,13 @@ TEST(operator_brackets, accessing)
     EXPECT_EQ(l[1], 2);
     EXPECT_EQ(l[2], 3);
     EXPECT_EQ(l[3], 4);
+
+    List<int> l1 = {1,2,3,4,5};
+    EXPECT_EQ(l1[0], 1);
+    EXPECT_EQ(l1[1], 2);
+    EXPECT_EQ(l1[2], 3);
+    EXPECT_EQ(l1[3], 4);
+    EXPECT_EQ(l1[4], 5);
 }
 
 TEST(operator_equal, equality) 
