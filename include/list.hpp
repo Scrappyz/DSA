@@ -32,11 +32,7 @@ class List {
         
         ~List()
         {
-            while(head_ != nullptr) {
-                Node<T>* temp = head_;
-                head_ = head_->next;
-                delete temp;
-            }
+            clear();
         }
 
         Node<T>* head() const
@@ -52,6 +48,44 @@ class List {
         int size() const
         {
             return size_;
+        }
+
+        Node<T>* node(int k) const
+        {
+            if(k < 0 || k > size_-1) {
+                throw "[Error] Index out of range";
+            }
+
+            Node<T>* ptr;
+            if(k < size_ / 2) {
+                ptr = head_; // use to traverse list
+                for(int i = 0; i < k; i++) {
+                    if(ptr == nullptr) { // reached the end of list
+                        break;
+                    }
+                    ptr = ptr->next; // move to next node
+                }
+            } else {
+                ptr = tail_;
+                for(int i = size_-1; i > k; i--) {
+                    if(ptr == nullptr) {
+                        break;
+                    }
+                    ptr = ptr->prev;
+                }
+            }
+
+            return ptr;
+        }
+
+        Node<T>* find(const T& val) const
+        {
+            Node<T>* ptr = head_;
+            while(ptr != nullptr && ptr->data != val) {
+                ptr = ptr->next;
+            }
+
+            return ptr;
         }
         
         void append(const T& data)
@@ -111,6 +145,7 @@ class List {
 
         void assign(const List<T>& l)
         {
+            size_ = 0;
             for(Node<T>* ptr = l.head_; ptr != nullptr; ptr = ptr->next) { // for loop to traverse list
                 append(ptr->data);
             }
@@ -118,25 +153,45 @@ class List {
 
         void assign(const std::initializer_list<T>& il)
         {
+            size_ = 0;
             for(const auto& i : il) {
                 append(i);
             }
-            size_ = il.size();
         }
 
-        void popHead()
+        void popFront()
         {
-            head_ = head_->next;
-            delete head_->prev;
-            head_->prev = nullptr;
+            if(empty()) {
+                return;
+            }
+
+            if(size_ == 1) {
+                delete head_;
+                head_ = nullptr;
+                tail_ = nullptr;
+            } else {
+                head_ = head_->next;
+                delete head_->prev;
+                head_->prev = nullptr;
+            }
             size_--;
         }
 
-        void popTail()
+        void popBack()
         {
-            tail_ = tail_->prev;
-            delete tail_->next;
-            tail_->next = nullptr;
+            if(empty()) {
+                return;
+            }
+
+            if(size_ == 1) {
+                delete tail_;
+                head_ = nullptr;
+                tail_ = nullptr;
+            } else {
+                tail_ = tail_->prev;
+                delete tail_->next;
+                tail_->next = nullptr;
+            }
             size_--;
         }
 
@@ -146,57 +201,39 @@ class List {
                 throw "[Error] Index out of range";
             }
 
-            if(k == 0) {
-                popHead();
+            if(k == 0) { // at the start
+                popFront();
                 return;
             }
 
-            if(k == size_-1) {
-                popTail();
+            if(k == size_-1) { // at the end
+                popBack();
                 return;
             }
 
-            Node<T>* ptr = head_; // use to traverse list
-            for(int i = 0; i < k-1; i++) {
-                if(ptr == nullptr) { // reached the end of list
-                    break;
-                }
-                ptr = ptr->next; // move to next node
-            }
+            Node<T>* ptr = node(k);
             
-            Node<T>* temp = ptr->next->next;
-            delete ptr->next;
-            ptr->next = temp;
-            temp->prev = ptr; 
+            ptr->prev->next = ptr->next;
+            ptr->next->prev = ptr->prev;
+            delete ptr;
             size_--;
+        }
+
+        void clear()
+        {
+            while(head_ != nullptr) {
+                Node<T>* temp = head_;
+                head_ = head_->next;
+                delete temp;
+            }
+            head_ = nullptr;
+            tail_ = nullptr;
+            size_ = 0;
         }
 
         T& operator[](int k) const
         {
-            if(k < 0 || k > size_-1) {
-                throw "[Error] Index out of range";
-            }
-            
-            Node<T>* ptr;
-            if(k < size_ / 2) {
-                ptr = head_; // use to traverse list
-                for(int i = 0; i < k; i++) {
-                    if(ptr == nullptr) { // reached the end of list
-                        break;
-                    }
-                    ptr = ptr->next; // move to next node
-                }
-            } else {
-                ptr = tail_;
-                for(int i = size_-1; i > k; i--) {
-                    if(ptr == nullptr) {
-                        break;
-                    }
-                    ptr = ptr->prev;
-                }
-            }
-
-            return ptr->data;
+            return node(k)->data;
         }
 
         bool empty() const
