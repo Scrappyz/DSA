@@ -9,9 +9,12 @@ void insertionSort(std::vector<T>& v, bool reverse = false)
         return;
     }
 
-    for(int i = 1; i < v.size(); i++) {
-        int j = i;
-        int k = j-1;
+    for(int i = 1; i < v.size(); i++) { // start at 2nd index
+        int j = i; // iterator to compare elements
+        int k = j-1; // iterator to compare the element before 'j'
+
+        // iterate 'i' and 'j' backwards and swap until
+        // they are in order
         if(reverse) {
             while(k >= 0 && v[k] < v[j]) {
                 T temp = v[k];
