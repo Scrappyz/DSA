@@ -13,7 +13,7 @@ void insertionSort(std::vector<T>& v, bool reverse = false)
         int j = i; // iterator to compare elements
         int k = j-1; // iterator to compare the element before 'j'
 
-        // iterate 'i' and 'j' backwards and swap until
+        // iterate 'j' and 'k' backwards and swap until
         // they are in order
         if(reverse) {
             while(k >= 0 && v[k] < v[j]) {
