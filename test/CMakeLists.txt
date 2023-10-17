@@ -23,8 +23,17 @@ add_executable(list_test ${CMAKE_CURRENT_SOURCE_DIR}/src/list_test.cpp)
 target_include_directories(list_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../include)
 target_link_libraries(list_test PUBLIC gtest_main)
 
+add_executable(insertion_sort_test ${CMAKE_CURRENT_SOURCE_DIR}/src/insertion_sort_test.cpp)
+target_include_directories(insertion_sort_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../include)
+target_link_libraries(insertion_sort_test PUBLIC gtest_main)
+
 # Add tests
 add_test(
     NAME ListTest
     COMMAND list_test
+)
+
+add_test(
+    NAME InsertionSortTest
+    COMMAND insertion_sort_test
 )
