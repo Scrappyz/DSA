@@ -26,7 +26,7 @@ std::vector<int> convertToInt(const std::vector<double>& v, int mult)
     return convert;
 }
 
-std::vector<std::pair<double, int>> getChange(double total, double cost)
+std::vector<std::pair<double, int>> getChange(double total, double cost = 0)
 {
     int mult = 100;
     std::vector<int> denominations = convertToInt({1000, 500, 200, 100, 50, 20, 10, 5, 1, .25, .05, .01}, mult);
