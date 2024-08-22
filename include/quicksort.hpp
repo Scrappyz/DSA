@@ -3,7 +3,7 @@
 #include <vector>
 
 template<typename T>
-void swap(T& a, T& b)
+void swap(T& a, T& b) 
 {
     T temp = a;
     a = b;
@@ -11,49 +11,60 @@ void swap(T& a, T& b)
 }
 
 template<typename T>
-T medianOfThree(const std::vector<T>& v)
+T medianOfThree(std::vector<T>& v, int low, int high) 
 {
-    std::vector<T> medians;
-    medians.push_back(v[0]);
-    medians.push_back(v[v.size() / 2]);
-    medians.push_back(v[v.size()-1]);
+    int middle = (low + high) / 2;
 
-    if(medians[1] < medians[0]) swap(medians[1], medians[0]);
-    if(medians[2] < medians[1]) swap(medians[2], medians[1]);
-    if(medians[1] < medians[0]) swap(medians[1], medians[0]);
+    // Sort the low, middle, high
+    if(v[low] > v[middle]) swap(v[low], v[middle]);
+    if(v[middle] > v[high]) swap(v[middle], v[high]);
+    if(v[low] > v[middle]) swap(v[low], v[middle]);
 
-    return medians[1];
+    // Swap middle element with the next to last element so the pivot is at v[high-1]
+    swap(v[middle], v[high-1]);
+
+    // Return the pivot
+    return v[high-1];
+}
+
+template<typename T>
+void quicksort(std::vector<T>& v, int low, int high)
+{
+    int size = high - low + 1;
+
+    if(size < 2) return;
+
+    T pivot = medianOfThree(v, low, high);
+
+    int i = low;
+    int j = high - 1;
+    while(true) {
+        // Move 'i' pointer to the right until it finds an element greater or equal to the pivot
+        while(v[i] < pivot) i++;
+
+        // Move 'j' pointer to the left until it finds an element lesser than the pivot
+        while(v[j] >= pivot) j--;
+
+        // if 'i' and 'j' pointers cross, stop the loop
+        if(i > j) break;
+
+        // Otherwise, swap 'i' element and 'j' element
+        swap(v[i], v[j]);
+    }
+
+    // Swap 'i' element with the pivot (pivot being v[high-1])
+    swap(v[i], v[high-1]);
+    // Pivot is now at v[i]
+
+    // Sort the left subarray (all elements left of the pivot index)
+    quicksort(v, low, i-1);
+
+    // Sort the right subarray (all elements right of the pivot index)
+    quicksort(v, i+1, high);
 }
 
 template<typename T>
 void quicksort(std::vector<T>& v)
 {
-    if(v.size() < 2) {
-        return;
-    }
-
-    if(v.size() == 2) {
-        if(v[1] < v[0]) swap(v[1], v[0]);
-        return;
-    }
-
-    T pivot = medianOfThree(v);
-
-    std::vector<T> left;
-    std::vector<T> right;
-
-    for(const auto& i : v) {
-        if(i < pivot) {
-            left.push_back(i);
-        } else if(i > pivot) {
-            right.push_back(i);
-        }
-    }
-
-    quicksort(left);
-    quicksort(right);
-
-    v = left;
-    v.push_back(pivot);
-    v.insert(v.end(), right.begin(), right.end());
+    quicksort(v, 0, v.size()-1);
 }
